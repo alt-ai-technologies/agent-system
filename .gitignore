@@ -1,4 +1,4 @@
 .env*
 .vscode*
 .agent-session
-.repo
+.repos

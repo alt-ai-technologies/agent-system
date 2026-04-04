@@ -7,27 +7,31 @@ WORKSPACE="$(pwd)"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 AGENT_SYSTEM_DIR="$(dirname "$SCRIPT_DIR")"
 
-# --- Read remote base URL from .repo ---
-REPO_CONFIG="${AGENT_SYSTEM_DIR}/.repo"
-if [[ ! -f "$REPO_CONFIG" ]]; then
-    echo "ERROR: .repo file not found at $REPO_CONFIG"
-    echo "       Create it with: echo 'remote=git@github.com:yourorg' > ${REPO_CONFIG}"
+# --- Read remote base URL from .repos ---
+REPOS_CONFIG="${AGENT_SYSTEM_DIR}/.repos"
+if [[ ! -f "$REPOS_CONFIG" ]]; then
+    echo "ERROR: .repos file not found at $REPOS_CONFIG"
+    echo "       Copy .repos.example to .repos and edit it."
     exit 1
 fi
 
-REMOTE=""
+DEFAULT_REMOTE=""
+REPO_REMOTE=""
 while IFS='=' read -r key value; do
     [[ -z "$key" || "$key" == \#* ]] && continue
-    if [[ "$key" == "remote" ]]; then
-        REMOTE="$value"
+    if [[ "$key" == "default" ]]; then
+        DEFAULT_REMOTE="$value"
+    elif [[ "$key" == "$REPO_NAME" ]]; then
+        REPO_REMOTE="$value"
     fi
-done < "$REPO_CONFIG"
+done < "$REPOS_CONFIG"
 
-if [[ -z "$REMOTE" ]]; then
-    echo "ERROR: 'remote' not set in $REPO_CONFIG"
+if [[ -z "$DEFAULT_REMOTE" ]]; then
+    echo "ERROR: 'default' not set in $REPOS_CONFIG"
     exit 1
 fi
 
+REMOTE="${REPO_REMOTE:-$DEFAULT_REMOTE}"
 REPO_URL="${REMOTE}/${REPO_NAME}.git"
 
 # --- Determine clone directory ---

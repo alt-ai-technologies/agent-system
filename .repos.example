@@ -1,0 +1,5 @@
+# Default remote — used for any repo without a specific override
+default=git@github.com:my-main-org
+
+# Per-repo overrides
+# some-repo=git@github.com:my-other-org
