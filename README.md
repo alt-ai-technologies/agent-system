@@ -16,11 +16,12 @@ Works with any Python repo that uses [uv](https://docs.astral.sh/uv/) for depend
    └── my-app-feature-2/  # another ephemeral clone
    ```
 
-2. Configure the git remote base URL:
+2. Configure git remotes:
    ```bash
-   cp .repo.example .repo
-   # Edit .repo to set your remote, e.g.:
-   # remote=git@github.com:myorg
+   cp .repos.example .repos
+   # Edit .repos — set your default remote and any per-repo overrides:
+   # default=git@github.com:myorg
+   # special-repo=git@github.com:other-org
    ```
 
 3. (Optional) Add env vars and VS Code settings for your repos:
@@ -129,7 +130,7 @@ agent-system/
 │   ├── plan.md             # Plan agent system prompt
 │   ├── build-agent.md      # Build agent system prompt
 │   └── task-agent.md       # Task agent system prompt
-├── .repo.example           # Example remote config (copy to .repo)
+├── .repos.example          # Example remote config (copy to .repos)
 └── .gitignore
 ```
 
