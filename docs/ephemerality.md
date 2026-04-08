@@ -47,6 +47,36 @@ These changes were made during the planning session because they're context-depe
 - The plan agent should think about scope (will this fit in one build session?) and track discussion threads (always track, rarely push back).
 - Context-dependent work (writing, framing, decisions) stays in the session that produced it. Mechanical work (renames, wiring) hands off to the build agent. It's a spectrum, not a binary.
 
+## Implementation Notes
+
+- `bin/status` had no task-specific references — the agent label is read dynamically from `.agent-session` and uppercased. Sessions started with `bin/hack` will display as `HACK` automatically. No code changes needed.
+- `lib/agent-session.sh` and `lib/allowed-tools.sh` had no task references. No changes needed.
+
+## What to Test
+
+**Files changed:** `bin/hack` (renamed from `bin/task`), `prompts/hack-agent.md` (renamed from `prompts/task-agent.md`), `README.md`, `docs/multi-org-clone.md`.
+
+**Happy path:**
+- Run `bin/hack <clone-dir>` — should launch a claude session with the hack agent prompt
+- Tab title should show `HACK: <feature-or-dir-name>`
+- `.agent-session` in the target dir should contain `agent=hack`
+- After session ends, `.agent-session` should show `state=done`
+
+**Status dashboard:**
+- Run `bin/status` after starting a hack session — agent column should show `HACK`
+
+**Prompt content:**
+- `prompts/hack-agent.md` should have the rewritten opening paragraph (exploratory work, debugging, UI iteration)
+- Plan agent prompt (`prompts/plan.md`) should have Scope Awareness and Thread Tracking sections
+
+**Docs:**
+- README shows "Hack Agent" (not "Task Agent"), `bin/hack`, and `hack-agent.md` in file tree
+- `docs/multi-org-clone.md` references `bin/hack` (not `bin/task`)
+
+**Error case:**
+- Run `bin/hack` with no args — should show `Usage: hack <directory>`
+- Run `bin/hack nonexistent-dir` — should show directory not found error
+
 ## Open Questions
 
 None.
