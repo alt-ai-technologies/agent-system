@@ -50,10 +50,10 @@ Works with any Python repo that uses [uv](https://docs.astral.sh/uv/) for depend
 - Test-first with fakes, then implementation. Must pass `ruff check` + `ruff format` + `pytest`
 - `bin/build <clone-dir>`
 
-### Task Agent
-- For small, ad-hoc work that doesn't need a plan doc
+### Hack Agent
+- For exploratory work, debugging, UI iteration, and small changes that don't need a plan doc
 - Interactive conversation to design the approach, then autonomous build
-- `bin/task <clone-dir>`
+- `bin/hack <clone-dir>`
 
 ### Peer Reviewer (Codex)
 - A different frontier model — different strengths, different blind spots, that's the point
@@ -121,7 +121,7 @@ agent-system/
 │   ├── clone           # Clone repo, setup env and vscode
 │   ├── plan            # Launch plan agent
 │   ├── build           # Launch build agent
-│   ├── task            # Launch task agent
+│   ├── hack            # Launch hack agent
 │   └── status          # Show active features dashboard
 ├── lib/
 │   ├── allowed-tools.sh    # Shared tool permission definitions
@@ -129,7 +129,7 @@ agent-system/
 ├── prompts/
 │   ├── plan.md             # Plan agent system prompt
 │   ├── build-agent.md      # Build agent system prompt
-│   └── task-agent.md       # Task agent system prompt
+│   └── hack-agent.md       # Hack agent system prompt
 ├── .repos.example          # Example remote config (copy to .repos)
 └── .gitignore
 ```

@@ -32,7 +32,7 @@ some-repo=git@github.com:my-other-org
 - Delete `.repo.example`
 
 **Out of scope:**
-- No changes to `bin/plan`, `bin/build`, `bin/task`, `bin/status` (they don't read `.repo`)
+- No changes to `bin/plan`, `bin/build`, `bin/hack`, `bin/status` (they don't read `.repo`)
 - No changes to `.env.{repo}` or `.vscode.{repo}` conventions (keyed off repo name, unaffected)
 - No backwards compatibility with `.repo`
 
