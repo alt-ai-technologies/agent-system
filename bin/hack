@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TARGET_DIR="${1:?Usage: task <directory>}"
+TARGET_DIR="${1:?Usage: hack <directory>}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 AGENT_SYSTEM_DIR="$(dirname "$SCRIPT_DIR")"
 WORKSPACE="$(dirname "$AGENT_SYSTEM_DIR")"
-PROMPT_FILE="${AGENT_SYSTEM_DIR}/prompts/task-agent.md"
+PROMPT_FILE="${AGENT_SYSTEM_DIR}/prompts/hack-agent.md"
 
 # shellcheck source=../lib/allowed-tools.sh
 source "${AGENT_SYSTEM_DIR}/lib/allowed-tools.sh"
@@ -34,10 +34,10 @@ fi
 # --- Set tab title ---
 eval "$(read_agent_session "$TARGET_DIR")" 2>/dev/null || true
 TAB_LABEL="${SESSION_feature:-$(basename "$TARGET_DIR")}"
-set_tab_title "TASK: ${TAB_LABEL}"
+set_tab_title "HACK: ${TAB_LABEL}"
 
 # --- Update session marker to running ---
-write_agent_session "$TARGET_DIR" state=running agent=task "pid=$$" "started_at=$(date +%s)"
+write_agent_session "$TARGET_DIR" state=running agent=hack "pid=$$" "started_at=$(date +%s)"
 
 # --- Trap: update marker and reset tab on exit ---
 AGENT_EXIT_CODE=0
@@ -52,7 +52,7 @@ cleanup() {
 trap cleanup EXIT
 
 # --- Launch ---
-echo "==> Starting task session in $TARGET_DIR"
+echo "==> Starting hack session in $TARGET_DIR"
 echo ""
 
 cd "$TARGET_DIR"
@@ -61,6 +61,6 @@ claude \
     --permission-mode acceptEdits \
     --append-system-prompt "$(cat "$PROMPT_FILE")" \
     --allowedTools "$GIT_TOOLS $PYTHON_TOOLS $SHELL_TOOLS $FILE_TOOLS $CODEX_TOOLS" \
-    "I have a small task for this repo. Ask me what I want to build."
+    "I'm here to hack on this repo. Ask me what I want to do."
 AGENT_EXIT_CODE=$?
 set -e
