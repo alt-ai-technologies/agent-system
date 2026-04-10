@@ -41,3 +41,12 @@ It's easy to start a session and forget to branch. Committing to main when you m
 ## Open Questions
 
 None.
+
+## What to Test
+
+- **Plan agent on main:** Start a plan session while on `main`. The agent should ask whether you want to stay on main or create a branch before doing anything else.
+- **Build agent on main:** Same check — start a build session on `main`, agent should prompt before reading the feature doc.
+- **Hack agent on main:** Same check — start a hack session on `main`, agent should prompt before the design conversation.
+- **Agent on a feature branch:** Start any agent session while on a non-main branch. The agent should say nothing about branches and proceed normally.
+- **Human says main is fine:** When prompted, tell the agent main is intentional. It should accept and move on without further mention.
+- **Human wants a branch:** When prompted, ask to create a feature branch. The agent should create it (or ask for a name) and continue on the new branch.
