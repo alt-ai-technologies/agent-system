@@ -18,5 +18,4 @@
 
 ## Git
 
-- Prefer normal git commands. Avoid `git -C`.
 - No tests in this repo.

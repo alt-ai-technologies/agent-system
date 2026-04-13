@@ -72,7 +72,7 @@ set +e
 claude \
     --permission-mode acceptEdits \
     --append-system-prompt "$(cat "$PROMPT_FILE")" \
-    --allowedTools "$GIT_TOOLS $SHELL_TOOLS $CODEX_TOOLS $FILE_TOOLS" \
+    --allowedTools "$GIT_TOOLS $GIT_C_TOOLS $SHELL_TOOLS $CODEX_TOOLS $FILE_TOOLS" \
     "$USER_PROMPT"
 AGENT_EXIT_CODE=$?
 set -e

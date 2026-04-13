@@ -60,7 +60,7 @@ set +e
 claude \
     --permission-mode acceptEdits \
     --append-system-prompt "$(cat "$PROMPT_FILE")" \
-    --allowedTools "$GIT_TOOLS $PYTHON_TOOLS $SHELL_TOOLS $FILE_TOOLS $CODEX_TOOLS" \
+    --allowedTools "$GIT_TOOLS $GIT_C_TOOLS $PYTHON_TOOLS $SHELL_TOOLS $FILE_TOOLS $CODEX_TOOLS" \
     "I'm here to hack on this repo. Ask me what I want to do."
 AGENT_EXIT_CODE=$?
 set -e
