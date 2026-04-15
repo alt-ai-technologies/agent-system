@@ -58,7 +58,7 @@ The merge plan must include:
 - Overlapping areas and how to handle them
 - Any real build work required beyond conflict resolution
 
-The plan is written but **not committed** during the interview. After codex + human review and approval, the planner:
+The plan is written but **not committed** during the interview. After codex review + human review and approval, the planner:
 1. Checks out the recommended base branch (e.g., `main`)
 2. Creates a new branch (e.g., `merge/altbot-into-main`)
 3. Commits the merge plan as the first commit on that branch
@@ -151,6 +151,15 @@ Branches are symmetric in invocation — order doesn't matter. The planner figur
 - Workflow step 4 "Merge (when branches diverge)" with correct invocation
 - File tree includes `bin/plan-merge`, `prompts/plan-merge.md`
 - Permissions section lists the new git commands
+
+## Implementation Notes
+
+The current `prompts/plan-merge.md` is missing several patterns from `prompts/plan.md` that need to be added:
+
+1. **Codex review gate** — between Phase 3 (write the plan) and Phase 4 (create the merge branch), the planner must run `codex review` on the merge plan and share the results with the human. Match the pattern in `prompts/plan.md` step 7: run codex review with a prompt focused on the merge plan's completeness, contradictions, and missing concerns. Iterate until findings are addressed or intentionally dismissed.
+2. **Hard gate rule** — add to the Rules section: "Do NOT tell the human the plan is ready or create the merge branch until you have run `codex review` and shared the results."
+3. **Update `.agent-session`** — when the merge gets a name during the interview, update `.agent-session` feature name, same as the plan agent does. Match the pattern: `sed -i '' 's/^feature=.*/feature=<name>/' .agent-session`
+4. **Output boundaries** — add a "The Merge Plan Should NOT Include" section, matching `prompts/plan.md`. The merge plan should not include exact code to write or detailed implementation steps beyond the merge sequence — the build agent figures out the internals.
 
 ## Open Questions
 
