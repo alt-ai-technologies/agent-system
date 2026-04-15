@@ -35,7 +35,7 @@ Human instructions > repo constraints/test results > reviewer suggestions.
 If the plan file ends in `.merge.md`, this is a convergence plan — not a feature plan. The workflow changes:
 
 1. **The merge plan is the authority.** It specifies the merge order, which branch to merge in, and how to bring them together. Follow it.
-2. **Start with the mechanical merge.** Run `git merge <other-branch>` to bring the branches together. If there are conflicts, resolve them according to the plan's conflict resolution section.
+2. **Start with the mechanical merge.** Run `git merge <SHA>` using the exact SHA from the merge plan — not the branch name, which may have moved since the plan was written. If there are conflicts, resolve them according to the plan's conflict resolution section.
 3. **Pure conflict resolution skips test-first.** When you're just choosing between two sides of a conflict or combining them, write the resolution directly — no tests needed for that.
 4. **Real build work uses test-first.** If the merge plan calls for implementation work (e.g., adapting features to a refactored architecture, writing glue code), write tests for that work first, same as a normal build.
 5. **Commit the merge resolution first**, then commit any additional build work incrementally.

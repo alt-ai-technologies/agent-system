@@ -53,10 +53,14 @@ fi
 echo "==> Fetching origin..."
 git -C "$CLONE_DIR" fetch origin
 
-# Validate both branches exist (locally or on remote)
+# Validate both branches exist — create local tracking branches for remote-only refs
 for BRANCH in "$BRANCH_A" "$BRANCH_B"; do
-    if ! git -C "$CLONE_DIR" rev-parse --verify "$BRANCH" >/dev/null 2>&1 && \
-       ! git -C "$CLONE_DIR" rev-parse --verify "origin/$BRANCH" >/dev/null 2>&1; then
+    if git -C "$CLONE_DIR" rev-parse --verify "$BRANCH" >/dev/null 2>&1; then
+        continue  # exists locally
+    elif git -C "$CLONE_DIR" rev-parse --verify "origin/$BRANCH" >/dev/null 2>&1; then
+        echo "==> Creating local tracking branch for $BRANCH"
+        git -C "$CLONE_DIR" branch "$BRANCH" "origin/$BRANCH"
+    else
         echo "ERROR: Branch '$BRANCH' not found locally or on origin"
         exit 1
     fi
