@@ -50,6 +50,15 @@ Works with any Python repo that uses [uv](https://docs.astral.sh/uv/) for depend
 - Test-first with fakes, then implementation. Must pass `ruff check` + `ruff format` + `pytest`
 - `bin/build <clone-dir>`
 
+### Merge Planner
+- Domain reconciliation agent for bringing two diverged branches back together
+- Reads plans, commit messages, and code from both sides to understand *intent*, not just conflicts
+- Interviews the human about overlaps and produces a convergence plan (`.merge.md`)
+- Recommends which branch should be the base, grounded in domain understanding
+- Creates a merge branch with the plan — neither source branch is modified
+- The build agent picks up the `.merge.md` plan and executes it
+- `bin/plan-merge <clone-dir> <branch-a> <branch-b>`
+
 ### Hack Agent
 - For exploratory work, debugging, UI iteration, and small changes that don't need a plan doc
 - Interactive conversation to design the approach, then autonomous build
@@ -90,13 +99,22 @@ bin/build <clone-dir>
 - Human reviews commits when done: `git log --oneline main..HEAD`
 - Human pushes when satisfied: `git push`
 
-### 4. Status
+### 4. Merge (when branches diverge)
+```bash
+bin/plan-merge <clone-dir> <branch-a> <branch-b>
+```
+- Analyzes both branches — reads plans, diffs, commit messages
+- Interviews you about overlaps and how to bring them together
+- Writes a convergence plan to `plans/<date>-<name>.merge.md`
+- Creates a merge branch; run `bin/build` on it to execute the plan
+
+### 5. Status
 ```bash
 bin/status
 ```
 - Shows all active ephemeral clones, their agent state, and progress
 
-### 5. Nuke
+### 6. Nuke
 ```bash
 rm -rf <clone-dir>
 ```
@@ -106,7 +124,7 @@ rm -rf <clone-dir>
 No `--dangerously-skip-permissions`. Agents get explicit `--allowedTools`:
 
 - **File ops:** `Edit`, `Write`, `Read`, `Glob`, `Grep`
-- **Git:** specific commands only — `add`, `commit`, `diff`, `log`, `status`, `branch`, `checkout`, `show`, `stash`, `rev-parse`. No `push`, no `reset`, no `remote`.
+- **Git:** specific commands only — `add`, `commit`, `diff`, `log`, `status`, `branch`, `checkout`, `show`, `stash`, `rev-parse`, `fetch`, `merge`, `merge-base`, `rev-list`, `ls-tree`, `merge-tree`. No `push`, no `reset`, no `remote`.
 - **Build tools:** `uv`, `ruff`, `python`, `pytest`
 - **Peer review:** `codex review` only
 - **Shell:** `ls`, `cat`, `head`, `tail`, `grep`, `find`, `tree`, `sed`, `awk`, etc.
@@ -120,7 +138,8 @@ agent-system/
 ├── bin/
 │   ├── clone           # Clone repo, setup env and vscode
 │   ├── plan            # Launch plan agent
-│   ├── build           # Launch build agent
+│   ├── plan-merge      # Launch merge planner
+│   ├── build           # Launch build agent (handles both feature and merge plans)
 │   ├── hack            # Launch hack agent
 │   └── status          # Show active features dashboard
 ├── lib/
@@ -128,8 +147,9 @@ agent-system/
 │   └── agent-session.sh    # Session tracking helpers
 ├── prompts/
 │   ├── plan.md             # Plan agent system prompt
-│   ├── build.md             # Build agent system prompt
-│   └── hack.md              # Hack agent system prompt
+│   ├── plan-merge.md       # Merge planner system prompt
+│   ├── build.md            # Build agent system prompt
+│   └── hack.md             # Hack agent system prompt
 ├── .repos.example          # Example remote config (copy to .repos)
 └── .gitignore
 ```
