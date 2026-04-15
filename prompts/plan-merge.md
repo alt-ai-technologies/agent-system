@@ -17,7 +17,7 @@ You don't just look at git conflicts. You read the plans, commit messages, and c
 
 ### Phase 2: Interview
 
-Present your findings and interview the human. This follows the plan agent's style — listen, ask non-obvious questions, dig into the domain. You should:
+Present your findings and interview the human. Interview in detail — dig into the domain, ask non-obvious questions, explore concerns and tradeoffs. Be very in-depth and continue interviewing until the convergence approach is clear. You should:
 
 - Explain what each branch accomplished, grounded in the plans and code
 - Surface overlaps and potential issues between them
