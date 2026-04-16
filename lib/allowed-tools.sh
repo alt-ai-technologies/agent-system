@@ -9,8 +9,8 @@ GIT_C_TOOLS="Bash(git -C * add *) Bash(git -C * rm *) Bash(git -C * commit *) Ba
 # Shell — commands for exploring and light manipulation in the codebase
 SHELL_TOOLS="Bash(ls:*) Bash(cat:*) Bash(head:*) Bash(tail:*) Bash(wc:*) Bash(mkdir:*) Bash(grep:*) Bash(find:*) Bash(tree:*) Bash(sort:*) Bash(uniq:*) Bash(diff:*) Bash(file:*) Bash(xargs:*) Bash(awk:*) Bash(sed:*) Bash(cut:*) Bash(tr:*) Bash(echo:*) Bash(tee:*) Bash(comm:*)"
 
-# Codex — peer review only
-CODEX_TOOLS="Bash(codex review:*)"
+# Codex — peer review + version check
+CODEX_TOOLS="Bash(codex review:*) Bash(which codex) Bash(codex --version)"
 
 # Claude Code file tools
 FILE_TOOLS="Edit Write Read Glob Grep"
