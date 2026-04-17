@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# --- Usage ---
+usage() {
+    echo "Usage: clone-nuke <directory> [--check]"
+    echo ""
+    echo "Safely delete an ephemeral clone after verifying no work would be lost."
+    echo ""
+    echo "  --check   Check only, don't delete"
+    exit 1
+}
+
+# --- Parse args ---
+DIR=""
+CHECK_ONLY=false
+
+for arg in "$@"; do
+    case "$arg" in
+        --check) CHECK_ONLY=true ;;
+        -*) echo "Unknown flag: $arg"; usage ;;
+        *)
+            if [[ -z "$DIR" ]]; then
+                DIR="$arg"
+            else
+                echo "Too many arguments"; usage
+            fi
+            ;;
+    esac
+done
+
+if [[ -z "$DIR" ]]; then
+    usage
+fi
+
+# Resolve to absolute path
+DIR="$(cd "$DIR" 2>/dev/null && pwd)" || {
+    echo "FAIL: directory does not exist: $1"
+    exit 1
+}
+
+# --- Setup ---
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+AGENT_SYSTEM_DIR="$(dirname "$SCRIPT_DIR")"
+
+# shellcheck source=../lib/agent-session.sh
+source "${AGENT_SYSTEM_DIR}/lib/agent-session.sh"
+
+# --- Run checks ---
+failures=()
+
+# 1. Is a git repo
+if [[ ! -d "${DIR}/.git" ]]; then
+    failures+=("Not a git repo (no .git directory)")
+fi
+
+# 2. Has .agent-session
+if [[ ! -f "${DIR}/${AGENT_SESSION_FILE}" ]]; then
+    failures+=("No ${AGENT_SESSION_FILE} file (not an ephemeral clone)")
+fi
+
+# Only run git checks if it's actually a git repo
+if [[ -d "${DIR}/.git" ]]; then
+
+    # 3. Not in detached HEAD
+    head_ref="$(git -C "$DIR" symbolic-ref HEAD 2>/dev/null || echo "")"
+    if [[ -z "$head_ref" ]]; then
+        failures+=("HEAD is detached")
+    fi
+
+    # 4. Clean working tree (staged + unstaged)
+    if ! git -C "$DIR" diff --quiet 2>/dev/null; then
+        failures+=("Unstaged changes in working tree")
+    fi
+    if ! git -C "$DIR" diff --cached --quiet 2>/dev/null; then
+        failures+=("Staged uncommitted changes")
+    fi
+
+    # 5. No untracked files
+    untracked="$(git -C "$DIR" ls-files --others --exclude-standard 2>/dev/null)"
+    if [[ -n "$untracked" ]]; then
+        failures+=("Untracked files present")
+    fi
+
+    # 6. All local branches pushed
+    while IFS= read -r branch; do
+        [[ -z "$branch" ]] && continue
+        # Strip leading whitespace and * marker
+        branch="$(echo "$branch" | sed 's/^[* ]*//')"
+
+        upstream="$(git -C "$DIR" rev-parse --abbrev-ref "${branch}@{upstream}" 2>/dev/null || echo "")"
+        if [[ -z "$upstream" ]]; then
+            failures+=("Branch '${branch}' has no remote tracking branch")
+            continue
+        fi
+
+        local_sha="$(git -C "$DIR" rev-parse "$branch" 2>/dev/null)"
+        upstream_sha="$(git -C "$DIR" rev-parse "$upstream" 2>/dev/null)"
+        if [[ "$local_sha" != "$upstream_sha" ]]; then
+            ahead="$(git -C "$DIR" rev-list --count "${upstream}..${branch}" 2>/dev/null || echo "?")"
+            if [[ "$ahead" != "0" ]]; then
+                failures+=("Branch '${branch}' is ${ahead} commit(s) ahead of '${upstream}'")
+            fi
+        fi
+    done < <(git -C "$DIR" branch 2>/dev/null)
+
+    # 7. No stashes
+    stash_count="$(git -C "$DIR" stash list 2>/dev/null | wc -l | tr -d ' ')"
+    if [[ "$stash_count" != "0" ]]; then
+        failures+=("${stash_count} stash(es) present")
+    fi
+
+fi
+
+# --- Report ---
+dir_label="$(basename "$DIR")"
+
+if [[ ${#failures[@]} -gt 0 ]]; then
+    echo "NOT NUKABLE: ${dir_label}"
+    for f in "${failures[@]}"; do
+        echo "  - $f"
+    done
+    exit 1
+fi
+
+if [[ "$CHECK_ONLY" == true ]]; then
+    echo "NUKABLE: ${dir_label}"
+    exit 0
+fi
+
+rm -rf "$DIR"
+echo "Nuked ${dir_label}"

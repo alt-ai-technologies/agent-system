@@ -116,8 +116,12 @@ bin/status
 
 ### 6. Nuke
 ```bash
-rm -rf <clone-dir>
+bin/clone-nuke <clone-dir>            # check + delete
+bin/clone-nuke <clone-dir> --check    # check only, no delete
 ```
+- Runs safety checks before deleting: git repo, `.agent-session` present, not detached HEAD, clean tree, no untracked files, all branches pushed, no stashes
+- If any check fails, prints what failed and exits non-zero
+- `--check` answers "is this nukable?" without deleting
 
 ## Permissions
 
@@ -141,7 +145,8 @@ agent-system/
 │   ├── plan-merge      # Launch merge planner
 │   ├── build           # Launch build agent (handles both feature and merge plans)
 │   ├── hack            # Launch hack agent
-│   └── status          # Show active features dashboard
+│   ├── status          # Show active features dashboard
+│   └── clone-nuke      # Safely delete ephemeral clones
 ├── lib/
 │   ├── allowed-tools.sh    # Shared tool permission definitions
 │   └── agent-session.sh    # Session tracking helpers
