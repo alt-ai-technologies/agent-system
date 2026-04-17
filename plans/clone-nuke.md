@@ -50,6 +50,32 @@ bin/clone-nuke <directory> --check   # check only, no delete
 - A local branch with no remote tracking branch at all is a fail — unpushed work
 - Untracked files block the nuke — they represent work outside git's knowledge
 
+## What to Test
+
+### Happy paths
+- `bin/clone-nuke <clean-clone> --check` → prints `NUKABLE: <dir>`, exits 0
+- `bin/clone-nuke <clean-clone>` → deletes the directory, prints `Nuked <dir>`, exits 0
+
+### Each safety check should block the nuke
+- Non-git directory → "Not a git repo"
+- Git repo without `.agent-session` → "No .agent-session file"
+- Detached HEAD → "HEAD is detached"
+- Unstaged changes → "Unstaged changes in working tree"
+- Staged uncommitted changes → "Staged uncommitted changes"
+- Untracked files → "Untracked files present"
+- Local branch with no upstream → "Branch 'x' has no remote tracking branch"
+- Local branch ahead of upstream → "Branch 'x' is N commit(s) ahead"
+- Stashes present → "N stash(es) present"
+
+### Edge cases
+- Multiple failures at once → all are listed, not just the first
+- `--check` with failures → still lists failures, exits non-zero
+- No args → prints usage
+- Non-existent directory → prints FAIL message, exits non-zero
+
+### Known issue
+- A hook in this repo comments out the `rm -rf` line. Verify line 131 of `bin/clone-nuke` has `rm -rf "$DIR"` uncommented before testing deletion.
+
 ## Open Questions
 
 None.
