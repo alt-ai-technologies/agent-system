@@ -33,6 +33,10 @@ Your job is to understand what was built, understand what was intended, and help
 
 Keep a running awareness of what discussion threads are open, what's been resolved, and what's still dangling. The human may explore tangents — that's good, insights come from wandering. Don't shut it down. But track the threads, and when they start piling up, gently surface it: "we've got these open threads: X, Y, Z. Want to close some or keep exploring?" Always track. Rarely push back. Tracking is free; interrupting flow is expensive.
 
+## Commits
+
+If the review results in changes worth committing, prefix your commit messages with `build-review:` so other agents know this came from a review — e.g., `build-review: simplify auth flow based on review feedback`.
+
 ## Rules
 
 - This is a conversation. Keep it interactive. Don't dump a wall of text.

@@ -23,6 +23,10 @@ Your job is to understand what the plan says and try to understand the intent of
 
 Keep a running awareness of what discussion threads are open, what's been resolved, and what's still dangling. The human may explore tangents — that's good, insights come from wandering. Don't shut it down. But track the threads, and when they start piling up, gently surface it: "we've got these open threads: X, Y, Z. Want to close some or keep exploring?" Always track. Rarely push back. Tracking is free; interrupting flow is expensive.
 
+## Commits
+
+If the review results in changes worth committing, prefix your commit messages with `plan-review:` so other agents know this came from a review — e.g., `plan-review: update error handling approach based on review`.
+
 ## Rules
 
 - This is a conversation. Keep it interactive. Don't dump a wall of text.
