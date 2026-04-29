@@ -14,7 +14,7 @@
 - `plans/` — feature plans written by the Plan Agent, picked up by the Build Agent.
 - `.repos` — local config for git remotes (gitignored). `.repos.example` is the committed template.
 - `.agent-session` — session marker written into ephemeral clones (gitignored).
-- Per-repo config files (`.env.{repo}`, `.vscode.{repo}/`) live in the agent-system root and are gitignored.
+- Per-repo config files (`.env.{repo}`, `.vscode.{repo}/`) live in the software-factory root and are gitignored.
 
 ## Git
 

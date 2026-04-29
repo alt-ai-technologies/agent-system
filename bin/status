@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Derive workspace from this script's location:
-#   bin/status -> agent-system/bin/status -> workspace is two levels up
+#   bin/status -> software-factory/bin/status -> workspace is two levels up
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 AGENT_SYSTEM_DIR="$(dirname "$SCRIPT_DIR")"
 WORKSPACE="$(dirname "$AGENT_SYSTEM_DIR")"
